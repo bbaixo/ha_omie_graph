@@ -16,3 +16,8 @@ Implementação de sensores em Home Assistant com os dados do Mercado SPOT de en
 
 ![image](https://user-images.githubusercontent.com/58397478/210556541-f1e05003-bbb8-4965-86b3-c6d127dd8803.png)
 
+------------------------------------------------------------------------
+
+Node-Red | Flow
+
+![image](https://user-images.githubusercontent.com/58397478/210557024-4d658edb-5f85-4a1e-9d7f-41eb7b3d3310.png)
