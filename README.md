@@ -7,8 +7,7 @@ Implementação de sensores em Home Assistant com os dados do Mercado SPOT de en
   - Armazenamento dos dados numa base de dados, neste caso MariaDB
   - Sensor com valores (minimo, média e máximo) do última sessão - consulta à BD
   - Sensor com valores (minimo, média e máximo) dos últimos dias - consulta à BD
-  - Card p/ vizualização
-    + é necessário o card https://github.com/plckr/chartjs-card
+  - Card p/ vizualização do gráfico: https://github.com/plckr/chartjs-card
 
 ------------------------------------------------------------------------
 
