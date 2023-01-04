@@ -1,0 +1,144 @@
+views:
+  - theme: Backend-selected
+    title: OMIE
+    path: omie
+    icon: ''
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: ' '
+            title: OMIE | Mercado spot - últimos 30 dias
+          - type: custom:chartjs-card
+            style: |
+              ha-card {
+                      z-index: 0;
+                      opacity: 1;
+                      border-color: rgba(0,0,0,0.2);
+                      border-radius: 15px;
+                      box-shadow: none;
+                      }
+              ha-card::after 
+                      {
+                      content: "";
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      background: center / cover no-repeat url('');
+                      opacity: 0.0;
+                      z-index: -1; 
+                      }
+            chart: line
+            data:
+              datasets:
+                - borderWidth: 1
+                  steppedLine: false
+                  showline: false
+                  backgroundColor: red
+                  linegroundColor: red
+                  borderColor: red
+                  pointRadius: 0
+                  fill: false
+                  data: >-
+                    ${states["sensor.nr_omie_energy_cost_last30d"].attributes.graph_maximo}
+                  label: Máxima
+                - borderWidth: 1
+                  steppedLine: false
+                  showline: false
+                  backgroundColor: darkgreen
+                  linegroundColor: darkgreen
+                  borderColor: darkgreen
+                  pointRadius: 0
+                  fill: false
+                  data: >-
+                    ${states["sensor.nr_omie_energy_cost_last30d"].attributes.graph_media}
+                  label: Média
+                - borderWidth: 1
+                  steppedLine: false
+                  showline: false
+                  backgroundColor: blue
+                  linegroundColor: blue
+                  borderColor: blue
+                  pointRadius: 0
+                  fill: false
+                  data: >-
+                    ${states["sensor.nr_omie_energy_cost_last30d"].attributes.graph_minimo}
+                  label: Minima
+              labels: >-
+                ${states["sensor.nr_omie_energy_cost_last30d"].attributes.graph_dia}
+            options:
+              responsive: true
+              plugins:
+                zoom:
+                  zoom:
+                    wheel:
+                      enabled: true
+                    pinch:
+                      enabled: true
+                    mode: xy
+                    limits:
+                      'y':
+                        min: -20
+                        max: 50
+                legend:
+                  font:
+                    size: 8
+                  display: true
+                  position: bottom
+                  align: start
+                  labels:
+                    boxWidth: 5
+                    font:
+                      size: 10
+                title:
+                  display: false
+                  text:
+                    - Mercardo spot - últimos 30 dias
+              scales:
+                x:
+                  display: true
+                  title:
+                    display: true
+                    align: end
+                    text: dia
+                  ticks:
+                    font:
+                      size: 10
+                'y':
+                  display: true
+                  position: left
+                  title:
+                    display: true
+                    align: end
+                    text: ºC
+                  grid:
+                    display: true
+                  ticks:
+                    font:
+                      size: 10
+      - type: entities
+        title: Omie | Preços última sessão
+        entities:
+          - type: attribute
+            entity: sensor.nr_omie_energy_cost_last
+            attribute: data
+            name: Data
+          - type: divider
+          - type: attribute
+            entity: sensor.nr_omie_energy_cost_last
+            attribute: minimo
+            name: Minimo
+            suffix: €
+          - type: attribute
+            entity: sensor.nr_omie_energy_cost_last
+            attribute: media
+            name: Média
+            suffix: €
+          - type: attribute
+            entity: sensor.nr_omie_energy_cost_last
+            attribute: maximo
+            name: Máximo
+            suffix: €

@@ -1,0 +1,540 @@
+[
+    {
+        "id": "33a6c89a2b6f7c20",
+        "type": "group",
+        "z": "caf66941.8ab588",
+        "name": "",
+        "style": {
+            "stroke": "none",
+            "fill": "#e3f3d3",
+            "label": true
+        },
+        "nodes": [
+            "79a1c97bfcf7ed78",
+            "992b7106edbead8d",
+            "1e8b6d3df15be29a",
+            "43673c93a115fd2b",
+            "e9e94faa85cf270a",
+            "8ed654d6297bb67e",
+            "985bacbb9a280c5a",
+            "3eeb7356563d9a06"
+        ],
+        "x": 34,
+        "y": 2219,
+        "w": 772,
+        "h": 182
+    },
+    {
+        "id": "79a1c97bfcf7ed78",
+        "type": "www-request",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "https://www.omie.es/sites/default/files/dados/NUEVA_SECCION/INT_PBC_EV_H_ACUM.TXT",
+        "follow-redirects": true,
+        "persistent-http": true,
+        "tls": "",
+        "x": 290,
+        "y": 2360,
+        "wires": [
+            [
+                "992b7106edbead8d"
+            ]
+        ]
+    },
+    {
+        "id": "992b7106edbead8d",
+        "type": "csv",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "",
+        "sep": ";",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "skip": "2",
+        "strings": false,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 390,
+        "y": 2300,
+        "wires": [
+            [
+                "1e8b6d3df15be29a"
+            ]
+        ]
+    },
+    {
+        "id": "1e8b6d3df15be29a",
+        "type": "switch",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "",
+        "property": "payload.Fecha",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "$fromMillis($millis()+86399999, '[D01]/[M01]/[Y]')",
+                "vt": "jsonata"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 530,
+        "y": 2300,
+        "wires": [
+            [
+                "43673c93a115fd2b"
+            ]
+        ]
+    },
+    {
+        "id": "43673c93a115fd2b",
+        "type": "change",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "Formata dados",
+        "rules": [
+            {
+                "t": "set",
+                "p": "dados.data",
+                "pt": "msg",
+                "to": "payload.Fecha",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "dados.hora",
+                "pt": "msg",
+                "to": "$number(payload.Hora)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "dados.valor_energia",
+                "pt": "msg",
+                "to": "payload[\"Precio marginal en el sistema espa�ol (EUR/MWh)\"]",
+                "tot": "msg",
+                "dc": true
+            },
+            {
+                "t": "set",
+                "p": "dados.volume_energia",
+                "pt": "msg",
+                "to": "payload[\"Energ�a total de compra sistema portugu�s (MWh)\"]",
+                "tot": "msg",
+                "dc": true
+            },
+            {
+                "t": "set",
+                "p": "dados.valor_energia",
+                "pt": "msg",
+                "to": "$trim(dados.valor_energia)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "dados.volume_energia",
+                "pt": "msg",
+                "to": "$trim(dados.volume_energia)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "change",
+                "p": "dados.valor_energia",
+                "pt": "msg",
+                "from": ",",
+                "fromt": "str",
+                "to": ".",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "dados.volume_energia",
+                "pt": "msg",
+                "from": ",",
+                "fromt": "str",
+                "to": ".",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 2300,
+        "wires": [
+            [
+                "e9e94faa85cf270a"
+            ]
+        ]
+    },
+    {
+        "id": "e9e94faa85cf270a",
+        "type": "template",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "SQL",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "sql",
+        "syntax": "mustache",
+        "template": "INSERT INTO tbl_energy_omies_costs (reg_date, reg_hour, reg_energy, reg_volume_energy)\nVALUES (STR_TO_DATE('{{{dados.data}}}', '%d/%m/%Y'), \n        SEC_TO_TIME({{{dados.hora}}}*60*60), \n        CAST('{{{dados.valor_energia}}}' AS double), \n        CAST('{{{dados.volume_energia}}}' AS double))",
+        "output": "str",
+        "x": 510,
+        "y": 2360,
+        "wires": [
+            [
+                "8ed654d6297bb67e"
+            ]
+        ]
+    },
+    {
+        "id": "8ed654d6297bb67e",
+        "type": "mysql",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "mydb": "b7a413c7.323e7",
+        "name": "BD Energia",
+        "x": 710,
+        "y": 2360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "985bacbb9a280c5a",
+        "type": "cronplus",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "TDA 13h00",
+        "outputField": "payload",
+        "timeZone": "",
+        "persistDynamic": false,
+        "commandResponseMsgOutput": "output1",
+        "outputs": 1,
+        "options": [
+            {
+                "name": "schedule1",
+                "topic": "schedule1",
+                "payloadType": "default",
+                "payload": "",
+                "expressionType": "cron",
+                "expression": "0 0 14 * * ? *",
+                "location": "",
+                "offset": "0",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset"
+            }
+        ],
+        "x": 150,
+        "y": 2300,
+        "wires": [
+            [
+                "79a1c97bfcf7ed78"
+            ]
+        ]
+    },
+    {
+        "id": "3eeb7356563d9a06",
+        "type": "comment",
+        "z": "caf66941.8ab588",
+        "g": "33a6c89a2b6f7c20",
+        "name": "Atualiza tabela com dados do custo de energia do mercado ibérico OMIES",
+        "info": "",
+        "x": 320,
+        "y": 2260,
+        "wires": []
+    },
+    {
+        "id": "b7a413c7.323e7",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "xxx.xxx.xxx.xxx",
+        "port": "3306",
+        "db": "base_dados",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "4d489e22317685e5",
+        "type": "group",
+        "z": "caf66941.8ab588",
+        "name": "",
+        "style": {
+            "stroke": "none",
+            "fill": "#e3f3d3",
+            "label": true
+        },
+        "nodes": [
+            "06948a5d847cc156",
+            "6fea6e8bd073e57e",
+            "f17668ad7519b321",
+            "d45a4818d9f4654f",
+            "79f8cb4f2aef0eb8",
+            "70fe7d6d6be74b7b"
+        ],
+        "x": 34,
+        "y": 2419,
+        "w": 772,
+        "h": 162
+    },
+    {
+        "id": "06948a5d847cc156",
+        "type": "template",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "name": "SQL",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "sql",
+        "syntax": "mustache",
+        "template": "SET @data_ini = CURDATE();\nSET @data_fim = DATE_SUB(CURDATE(), INTERVAL 1 MONTH);\n\nSELECT \n\tCONCAT('[', GROUP_CONCAT(DIA), ']') as DIA,\n\tCONCAT('[', GROUP_CONCAT(MIN), ']') as MIN,\n\tCONCAT('[', GROUP_CONCAT(MED), ']') as MED,\n\tCONCAT('[', GROUP_CONCAT(MAX), ']') as MAX\nFROM (\n    SELECT day(reg_date) AS DIA, ROUND(AVG(reg_energy),1) AS MED, ROUND(MIN(reg_energy),1) AS MIN, ROUND(MAX(reg_energy),1) AS MAX\n    FROM tbl_energy_omies_costs\n    WHERE (reg_date > @data_fim AND reg_date <= @data_ini)\n    GROUP BY reg_date\n    ORDER BY reg_date\n    ) AS tbl1;\n\nSELECT DATE_FORMAT(reg_date ,'%Y/%m/%d') AS DATA, ROUND(AVG(reg_energy),2) AS MED, ROUND(MIN(reg_energy),2) AS MIN, ROUND(MAX(reg_energy),2) AS MAX\nFROM tbl_energy_omies_costs\nGROUP BY reg_date\nORDER BY reg_date DESC\nLIMIT 1;",
+        "output": "str",
+        "x": 310,
+        "y": 2500,
+        "wires": [
+            [
+                "d45a4818d9f4654f"
+            ]
+        ]
+    },
+    {
+        "id": "6fea6e8bd073e57e",
+        "type": "comment",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "name": "Cria sensores de custo da energia do mercado ibério OMIES",
+        "info": "",
+        "x": 280,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "f17668ad7519b321",
+        "type": "cronplus",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "name": "TDA 13h01",
+        "outputField": "payload",
+        "timeZone": "",
+        "persistDynamic": false,
+        "commandResponseMsgOutput": "output1",
+        "outputs": 1,
+        "options": [
+            {
+                "name": "schedule1",
+                "topic": "schedule1",
+                "payloadType": "default",
+                "payload": "",
+                "expressionType": "cron",
+                "expression": "0 1 13 * * ? *",
+                "location": "",
+                "offset": "0",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset"
+            }
+        ],
+        "x": 150,
+        "y": 2500,
+        "wires": [
+            [
+                "06948a5d847cc156"
+            ]
+        ]
+    },
+    {
+        "id": "d45a4818d9f4654f",
+        "type": "mysql",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "mydb": "b7a413c7.323e7",
+        "name": "BD Energia",
+        "x": 470,
+        "y": 2500,
+        "wires": [
+            [
+                "79f8cb4f2aef0eb8",
+                "70fe7d6d6be74b7b"
+            ]
+        ]
+    },
+    {
+        "id": "79f8cb4f2aef0eb8",
+        "type": "ha-entity",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "name": "Omie Costs (last 30d)",
+        "server": "7871460f.010ef8",
+        "version": 2,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "nr_omie_energy_cost_last30d"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": "mdi:lightning-bolt"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "€"
+            },
+            {
+                "property": "state_class",
+                "value": ""
+            },
+            {
+                "property": "last_reset",
+                "value": ""
+            }
+        ],
+        "state": "info in attributes",
+        "stateType": "str",
+        "attributes": [
+            {
+                "property": "graph_dia",
+                "value": "payload[2][0].DIA",
+                "valueType": "msg"
+            },
+            {
+                "property": "graph_media",
+                "value": "payload[2][0].MED",
+                "valueType": "msg"
+            },
+            {
+                "property": "graph_minimo",
+                "value": "payload[2][0].MIN",
+                "valueType": "msg"
+            },
+            {
+                "property": "graph_maximo",
+                "value": "payload[2][0].MAX",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "payload",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "",
+        "outputPayloadType": "str",
+        "x": 680,
+        "y": 2480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "70fe7d6d6be74b7b",
+        "type": "ha-entity",
+        "z": "caf66941.8ab588",
+        "g": "4d489e22317685e5",
+        "name": "Omie Costs (last)",
+        "server": "7871460f.010ef8",
+        "version": 2,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "nr_omie_energy_cost_last"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": "mdi:lightning-bolt"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "€"
+            },
+            {
+                "property": "state_class",
+                "value": ""
+            },
+            {
+                "property": "last_reset",
+                "value": ""
+            }
+        ],
+        "state": "info in attributes",
+        "stateType": "str",
+        "attributes": [
+            {
+                "property": "data",
+                "value": "payload[3][0].DATA",
+                "valueType": "msg"
+            },
+            {
+                "property": "media",
+                "value": "payload[3][0].MED",
+                "valueType": "msg"
+            },
+            {
+                "property": "minimo",
+                "value": "payload[3][0].MIN",
+                "valueType": "msg"
+            },
+            {
+                "property": "maximo",
+                "value": "payload[3][0].MAX",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "payload",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "",
+        "outputPayloadType": "str",
+        "x": 670,
+        "y": 2540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7871460f.010ef8",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 4,
+        "addon": false,
+        "rejectUnauthorizedCerts": false,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": "30",
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m"
+    }
+]
