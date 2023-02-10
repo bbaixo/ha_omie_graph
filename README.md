@@ -1,6 +1,9 @@
 # ha_omie_graph
 **HA | OMIE - Mercado SPOT**
 
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
 **Método 1 - MariaDB + NodeRed**
 
 Implementação de sensores em Home Assistant com os dados do Mercado SPOT de energia da Portugal.
@@ -22,6 +25,9 @@ Implementação de sensores em Home Assistant com os dados do Mercado SPOT de en
 Node-Red | Flow
 
 ![image](https://user-images.githubusercontent.com/58397478/210557295-d87cec31-9a25-4291-bb78-0c300a3acfe2.png)
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 **Método 2 - Scrap + MiniGraph (ou ApexCharts)**
 
