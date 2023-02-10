@@ -1,4 +1,4 @@
-Minigraph
+### CUSTOM - Minigraph card
 
 type: custom:mini-graph-card
 entities:
@@ -24,7 +24,7 @@ show:
   average: false
   icon_adaptive_color: true
 
-Apex-charts
+### CUSTOM - Apex-charts card
 
 type: custom:apexcharts-card
 graph_span: 30d
