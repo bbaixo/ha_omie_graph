@@ -6,7 +6,7 @@ Implementação de sensores em Home Assistant com os dados do Mercado SPOT de en
   - Recolha de dados via NR, com consulta direta à página https://www.omie.es/sites/default/files/dados/NUEVA_SECCION/INT_PBC_EV_H_ACUM.TXT
   - Armazenamento dos dados numa base de dados, neste caso MariaDB
   - Sensor com valores (minimo, média e máximo) do última sessão - consulta à BD
-  - Sensor com valores (minimo, média e máximo) dos últimos dias - consulta à BD
+  - Sensor com valores (minimo, média e máximo) dos últimos 30 dias - consulta à BD
   - Card p/ vizualização do gráfico: https://github.com/plckr/chartjs-card
 
 ------------------------------------------------------------------------
